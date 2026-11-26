@@ -54,7 +54,7 @@ FieldFlow helps organizations manage field operations through a structured workf
 
 ## Project Status
 
-Core backend workflows, authentication, role-based authorization, Redis dashboard caching, and Postman API testing have been implemented.
+Core backend workflows, JWT authentication, role-based authorization, Redis dashboard caching, Docker Compose deployment, and Postman API testing have been implemented.
 
 More detailed architecture diagrams, API documentation, setup instructions, and demonstration details will be added below.
 
@@ -310,11 +310,6 @@ The collection includes authentication, service request, work order, assignment,
 
 ### Prerequisites
 
-Make sure the following tools are installed:
-
-- Java 21
-- Maven 3.9+
-- MySQL 8+
 - Docker Desktop
 - Git
 - Postman (optional, for API testing)
@@ -322,59 +317,42 @@ Make sure the following tools are installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd feildflow
+git clone https://github.com/dafalsanika30/FieldFlow.git
+cd FieldFlow
 ```
 
-### 2. Create the MySQL Database
-
-Open MySQL Workbench and execute:
-
-```sql
-CREATE DATABASE fieldflow_db;
-```
-
-### 3. Configure Environment Variables
-
-The application uses environment variables for database credentials and the JWT signing key.
-
-On Windows Command Prompt:
-
-```cmd
-set DB_PASSWORD=your_mysql_password
-set JWT_SECRET=your_secure_jwt_secret_key
-```
-
-Use your own MySQL password and a secure JWT secret of at least 32 characters.
-
-Keep these variables set in the same terminal session used to run the application.
-
-### 4. Start Redis Using Docker
+### 2. Start All Services Using Docker Compose
 
 Make sure Docker Desktop is running.
 
 ```bash
-docker run -d --name fieldflow-redis -p 6379:6379 redis:7-alpine
+docker compose up --build -d
 ```
 
-If the container already exists, start it using:
+This starts:
+- Spring Boot backend
+- MySQL 8 database
+- Redis cache
+
+### 3. Verify Container Status
 
 ```bash
-docker start fieldflow-redis
+docker compose ps
 ```
 
-### 5. Build and Run the Application
-
-From the project root directory:
+### 4. View Application Logs
 
 ```bash
-mvn clean package -DskipTests
-mvn spring-boot:run
+docker compose logs -f app
 ```
 
-The application runs at:
+### 5. Service Access
 
-`http://localhost:8080`
+| Service | Address |
+|---|---|
+| Spring Boot API | http://localhost:8080 |
+| MySQL | localhost:3307 |
+| Redis | localhost:6380 |
 
 ### 6. Test the APIs
 
@@ -382,7 +360,53 @@ Import the Postman collection:
 
 `postman/FieldFlow.postman_collection.json`
 
-Authenticate using the login API and use the returned JWT token for protected endpoints.
+Login using one of the demo accounts and use the returned JWT token for protected endpoints.
+
+### 7. Stop the Application
+
+```bash
+docker compose down
+```
+
+To stop services and remove the MySQL database volume:
+
+```bash
+docker compose down -v
+```
+
+**Warning:** The second command permanently deletes the database data stored in the Docker volume.
+
+### 8. Local Development (Alternative)
+
+For development without Docker Compose, install Java 21, Maven 3.9+, MySQL 8+, and Redis 7.
+
+Create the database:
+
+```sql
+CREATE DATABASE fieldflow_db;
+```
+
+Configure environment variables in Windows Command Prompt:
+
+```cmd
+set DB_PASSWORD=your_mysql_password
+set JWT_SECRET=your_secure_jwt_secret_key_of_at_least_32_characters
+```
+
+Start Redis:
+
+```bash
+docker run -d --name fieldflow-redis -p 6379:6379 redis:7-alpine
+```
+
+Build and run:
+
+```bash
+mvn clean package -DskipTests
+mvn spring-boot:run
+```
+
+The API runs at http://localhost:8080.
 
 ## Configuration Notes
 
