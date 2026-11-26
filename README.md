@@ -579,3 +579,9 @@ The application automatically creates the following demo accounts on startup if 
 | Supervisor | supervisor@test.com | test123 |
 
 **Note:** These credentials are intended for local demonstration and evaluation only. Passwords are stored using BCrypt hashing. Do not use these credentials in production.
+
+## 🎥 Project Demo Video
+
+Watch the complete FieldFlow project demonstration, covering the application architecture, authentication, service request workflow, work order management, technician assignments, dashboard, and Redis caching.
+
+[**Watch FieldFlow Demo Video**](https://drive.google.com/file/d/1wCvtfdzvEs0Xks0Xv9KXpTyNmUcJtuqb/view?usp=sharing)
