@@ -6,6 +6,109 @@ A backend system built with Spring Boot to manage field service requests, work o
 
 FieldFlow helps organizations manage field operations through a structured workflow. Requesters can submit service requests, planners can review requests and create work orders, technicians can accept and complete assigned work, and supervisors can verify and close completed work orders.
 
+## Research and Problem Understanding
+
+### 1. Service Request Management
+
+Service request management is the process of receiving, recording, reviewing, prioritizing, and tracking requests for maintenance or operational support.
+
+In infrastructure operations, requests may come from citizens, employees, customers, or field staff. Examples include damaged roads, water leakage, broken streetlights, and sanitation issues.
+
+### 2. Field Maintenance Operations
+
+Field maintenance operations involve planning and executing physical maintenance activities at specific locations.
+
+The process generally includes:
+- Reviewing and approving maintenance requests.
+- Creating work orders with instructions.
+- Identifying suitable technicians and available resources.
+- Assigning work based on operational requirements and location.
+- Tracking execution and completion.
+- Verifying the work before closing the work order.
+
+### 3. Operational Responsibilities
+
+| Actor | Responsibility |
+|---|---|
+| Requester | Reports maintenance issues and tracks requests |
+| Planner | Reviews requests, creates work orders, and assigns technicians |
+| Technician | Accepts assignments and performs field work |
+| Supervisor | Monitors operations, verifies completed work, and closes work orders |
+| Administrator | Manages users and administrative access |
+
+### 4. Resource Allocation Approach
+
+In a real field service environment, resource allocation may consider technician skills, availability, workload, team membership, location, urgency, and required equipment.
+
+In FieldFlow, the planner manually selects a technician for an approved work order. Automated scheduling and optimization based on skills, distance, and availability are future enhancements.
+
+## Architecture Decisions and Service Boundaries
+
+### 1. Current Architecture
+
+FieldFlow is implemented as a modular monolithic Spring Boot application.
+
+The following logical service boundaries are used:
+
+- **Authentication and User Management:** Handles login, user information, and access control.
+- **Service Request Management:** Handles request creation, review, approval, and rejection.
+- **Work Order Management:** Handles work order creation, verification, and closure.
+- **Assignment Management:** Handles technician assignment and execution status.
+- **Activity Logging:** Records important operational actions.
+- **Alert Management:** Provides the data model for operational alerts.
+- **Dashboard:** Provides operational summary data using Redis caching.
+
+### 2. Future Microservice Architecture
+
+These modules could be extracted into independent services as the system grows.
+
+For example, Service Request, Work Order, Assignment, Notification, and Reporting services could communicate through REST APIs or asynchronous events.
+
+The current implementation uses a modular monolith to keep deployment and development manageable for the scope of this project.
+
+## Real-Time Monitoring Approach
+
+The current backend exposes a dashboard summary API that can be called repeatedly by a frontend to refresh operational information.
+
+Redis caches dashboard summary data with a 60-second TTL, and relevant data modifications trigger cache eviction.
+
+WebSocket communication and event-driven real-time notifications are not implemented. They could be introduced in a future version for immediate status updates and operational alerts.
+
+## Alerts, Notifications and PDF Reports
+
+### Alerts and Notifications
+
+An Alert entity is included in the database design to represent operational alerts.
+
+Automated notification delivery for delays, priority changes, escalations, email, SMS, and push notifications is not implemented in the current version.
+
+These features could be added through a dedicated notification module or service.
+
+### PDF Generation
+
+Automatic PDF generation for work orders, inspection reports, and completion reports is not implemented.
+
+This is considered a future enhancement that could provide downloadable operational documents and maintenance records.
+
+## Implementation Scope and Trade-offs
+
+| Area | Implementation |
+|---|---|
+| Authentication | JWT authentication and role-based authorization |
+| Service requests | Implemented |
+| Work orders | Implemented |
+| Technician assignments | Implemented |
+| Work completion and verification | Implemented |
+| Activity logging | Implemented |
+| Dashboard caching | Implemented using Redis |
+| Docker deployment | Implemented using Docker Compose |
+| Alerts | Entity implemented; automated delivery skipped |
+| Microservices | Logical boundaries designed; modular monolith implemented |
+| Real-time updates | API-based retrieval; WebSockets skipped |
+| PDF generation | Skipped |
+
+The project prioritizes a complete operational workflow, clear business rules, role-based access, auditability, and a reproducible Docker-based environment over implementing every possible feature.
+
 ## Key Features
 
 - JWT-based authentication and role-based authorization
