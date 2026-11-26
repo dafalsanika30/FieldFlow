@@ -439,3 +439,16 @@ FieldFlow implements authentication and authorization using Spring Security and 
 | 403 | Insufficient permissions |
 | 404 | Resource not found |
 | 500 | Internal server error |
+
+## Demo Accounts
+
+The application automatically creates the following demo accounts on startup if they do not already exist.
+
+| Role | Email | Password |
+|---|---|---|
+| Requester | requester@test.com | test123 |
+| Planner | planner@test.com | test123 |
+| Technician | technician@test.com | test123 |
+| Supervisor | supervisor@test.com | test123 |
+
+**Note:** These credentials are intended for local demonstration and evaluation only. Passwords are stored using BCrypt hashing. Do not use these credentials in production.
